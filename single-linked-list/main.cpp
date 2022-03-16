@@ -1,9 +1,49 @@
 #include <cassert>
-
+#include <cstddef>
+#include <string>
+#include <utility>
+#include <algorithm>
+#include <stdexcept>
 #include "single-linked-list.h"
 
-// Эта функция проверяет работу класса SingleLinkedList
-void Test() {
+
+template <typename Type>
+void swap(SingleLinkedList<Type>& lhs, SingleLinkedList<Type>& rhs) noexcept {
+    lhs.swap(rhs);
+}
+
+template <typename Type>
+bool operator==(const SingleLinkedList<Type>& lhs, const SingleLinkedList<Type>& rhs) {
+    return std::equal(lhs.begin(), lhs.end(), rhs.begin());
+}
+
+template <typename Type>
+bool operator!=(const SingleLinkedList<Type>& lhs, const SingleLinkedList<Type>& rhs) {
+    return !(lhs == rhs);
+}
+
+template <typename Type>
+bool operator<(const SingleLinkedList<Type>& lhs, const SingleLinkedList<Type>& rhs) {
+    return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+}
+
+template <typename Type>
+bool operator<=(const SingleLinkedList<Type>& lhs, const SingleLinkedList<Type>& rhs) {
+    return !(lhs > rhs);
+}
+
+template <typename Type>
+bool operator>(const SingleLinkedList<Type>& lhs, const SingleLinkedList<Type>& rhs) {
+    return rhs < lhs;
+}
+
+template <typename Type>
+bool operator>=(const SingleLinkedList<Type>& lhs, const SingleLinkedList<Type>& rhs) {
+    return !(lhs < rhs);
+} 
+
+
+void Test4() {
     struct DeletionSpy {
         ~DeletionSpy() {
             if (deletion_counter_ptr) {
@@ -146,5 +186,5 @@ void Test() {
 }
 
 int main() {
-    Test();
+    Test4();
 }
