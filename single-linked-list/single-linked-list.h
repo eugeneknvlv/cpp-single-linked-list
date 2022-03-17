@@ -52,6 +52,7 @@ class SingleLinkedList {
         }
 
         BasicIterator& operator++() noexcept {
+			assert(node_ != nullptr);
             node_ = node_->next_node;
             return *this;
         }
@@ -63,10 +64,12 @@ class SingleLinkedList {
         }
 
         [[nodiscard]] reference operator*() const noexcept {
+			assert(node_ != nullptr);
             return node_->value;
         }
 
         [[nodiscard]] pointer operator->() const noexcept {
+			assert(node_ != nullptr);
             return &(node_->value);
         }
 
@@ -89,16 +92,12 @@ public:
 
     template <typename Container>
     SingleLinkedList ConstructList(const Container& cont) {
-        SingleLinkedList tmp_list;
-        for (auto i = cont.begin(); i != cont.end(); i++) {
-            tmp_list.PushFront(*i);
-        }
-
         SingleLinkedList list;
-        for (auto i = tmp_list.begin(); i != tmp_list.end(); i++) {
-            list.PushFront(*i);
+		Iterator pos(&(list.head_));
+        for (const auto& el : cont) {
+			pos = InsertAfter(pos, el);
+            ++list.size_;
         }
-
         return list;
     }
 
@@ -121,14 +120,9 @@ public:
         return *this;
     }
 
-    // Обменивает содержимое списков за время O(1)
     void swap(SingleLinkedList& other) noexcept {
-        auto tmp_head_next_node = head_.next_node;
-        auto tmp_size = size_;
-        head_.next_node = other.head_.next_node;
-        size_ = other.size_;
-        other.head_.next_node = tmp_head_next_node;
-        other.size_ = tmp_size;
+        std::swap(head_.next_node, other.head_.next_node);
+        std::swap(size_, other.size_);
     }
 
     [[nodiscard]] size_t GetSize() const noexcept {
@@ -145,6 +139,7 @@ public:
     }
 
     void PopFront() noexcept {
+        assert(head_.next_node != nullptr);
         auto N = head_.next_node;
         auto new_first_node = N->next_node;
         delete N;
@@ -152,6 +147,7 @@ public:
     }
 
     Iterator InsertAfter(ConstIterator pos, const Type& value) {
+        assert(pos.node_ != nullptr);
         Node* node_to_insert_after = pos.node_; 
         Node* new_node = new Node(value, node_to_insert_after->next_node);
         node_to_insert_after->next_node = new_node;
@@ -160,6 +156,7 @@ public:
     }
 
     Iterator EraseAfter(ConstIterator pos) noexcept {
+        assert(pos.node_ != nullptr);
         Node* node_before_one_to_erase = pos.node_;
         Node* node_to_erase = node_before_one_to_erase->next_node;
         Node* new_next_node = node_to_erase->next_node;
